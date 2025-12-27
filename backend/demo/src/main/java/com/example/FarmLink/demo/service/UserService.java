@@ -1,5 +1,6 @@
 package com.example.FarmLink.demo.service;
 
+import com.example.FarmLink.demo.dto.UserDto;
 import com.example.FarmLink.demo.model.Roles;
 import com.example.FarmLink.demo.model.Users;
 import com.example.FarmLink.demo.repository.RolesRepo;
@@ -41,4 +42,17 @@ public class UserService{
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
+    public Users getCurrentUser(String email) {
+        Users currentUser = userRepo.findByEmail(email);
+        return currentUser;
+    }
+
+    public Users updateProfile(UserDto userDto, String email) {
+        Users users = getCurrentUser(email);
+
+        users.setName(userDto.getName());
+        users.setMobileNumber(userDto.getMobileNum());
+        return userRepo.save(users);
+
+    }
 }
