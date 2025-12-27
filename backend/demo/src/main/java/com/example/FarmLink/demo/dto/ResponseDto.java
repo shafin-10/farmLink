@@ -1,4 +1,4 @@
-package com.example.FarmLink.demo.model;
+package com.example.FarmLink.demo.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Response {
+public class ResponseDto {
     private String statusCode;
     private String statusMsg;
 }
