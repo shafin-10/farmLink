@@ -30,5 +30,28 @@ ADD CONSTRAINT fk_products_farmer
 FOREIGN KEY (farmer_id)
 REFERENCES users(user_id);
 
+CREATE TABLE orders (
+    order_id SERIAL PRIMARY KEY,
+    buyer_id INT NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    total_amount NUMERIC(10,2) NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+     created_by VARCHAR(50) NOT NULL,
+     updated_at TIMESTAMP DEFAULT NULL,
+     updated_by VARCHAR(50) DEFAULT NULL,
+
+    CONSTRAINT fk_order_buyer FOREIGN KEY (buyer_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE order_items (
+    order_item_id SERIAL PRIMARY KEY,
+    order_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity INT NOT NULL,
+    price NUMERIC(10,2) NOT NULL,
+
+    CONSTRAINT fk_order FOREIGN KEY (order_id) REFERENCES orders(order_id),
+    CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
 
 

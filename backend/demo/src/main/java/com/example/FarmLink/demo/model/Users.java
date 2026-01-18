@@ -50,7 +50,14 @@ public class Users extends BaseEntity{
     @JoinColumn(name = "role_id", referencedColumnName = "roleId", nullable = false)
     private Roles roles;
 
+    // Farmer - Products
     @OneToMany(mappedBy = "farmer", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Product> products;
+
+    // Buyer - Orders
+    @OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Order> buyerOrders;
+
 }
