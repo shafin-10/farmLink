@@ -1,5 +1,7 @@
 package com.example.FarmLink.demo.service;
 
+import com.example.FarmLink.demo.dto.ProductDto;
+import com.example.FarmLink.demo.dto.UserDto;
 import com.example.FarmLink.demo.model.Product;
 import com.example.FarmLink.demo.model.Users;
 import com.example.FarmLink.demo.repository.ProductRepo;
@@ -42,5 +44,28 @@ public class ProductService {
            productRepo.deleteById(id);
        }
        else throw new EntityNotFoundException("User cannot delete product");
+    }
+
+    public ProductDto getByID(int id) {
+        ProductDto productDto = new ProductDto();
+        UserDto farmer = new UserDto();
+
+        Product product = productRepo.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+        productDto.setId(product.getProductId());
+        productDto.setName(product.getName());
+        productDto.setDescription(product.getDescription());
+        productDto.setCategory(product.getCategory());
+        productDto.setPrice(product.getPrice());
+        productDto.setHarvestDate(product.getHarvestDate());
+        productDto.setStatus(product.getStatus());
+        productDto.setStock(product.getStock());
+
+        farmer.setName(product.getFarmer().getName());
+        farmer.setEmail(product.getFarmer().getEmail());
+        farmer.setMobileNum(product.getFarmer().getMobileNumber());
+
+        productDto.setFarmer(farmer);
+
+        return productDto;
     }
 }

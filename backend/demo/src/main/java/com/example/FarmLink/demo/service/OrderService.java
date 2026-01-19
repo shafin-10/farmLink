@@ -63,6 +63,7 @@ public class OrderService {
         order.setItems(orderItems);
         order.setTotalAmount(total);
 
+
         return orderRepo.save(order);
     }
 
@@ -83,4 +84,44 @@ public class OrderService {
     }
 
 
+    public OrderDto getOrderDetails(int orderId, String email) {
+        Users user = userRepo.findByEmail(email);
+        if (user == null)
+            throw new RuntimeException("user not found");
+
+        Order order = orderRepo.findById(orderId).orElseThrow(() ->new RuntimeException("Order not found"));
+
+        if ((order.getBuyer().getUserId() != user.getUserId())
+            || user.getRoles().getRoleName().equals("ADMIN")){
+                throw new RuntimeException("You are not authorized to view this order");
+        }
+        return OrderMapper.toDto(order);
+    }
+
+    @Transactional
+    public void cancelOrder(String email, int orderId){
+        Users user = userRepo.findByEmail(email);
+        if (user == null)
+            throw new RuntimeException("User not found");
+
+        Order order = orderRepo.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+
+        if (!user.equals(order.getBuyer()))
+            throw new RuntimeException("You do not own this product");
+
+        if (order.getStatus() == Order.Status.DELIVERED ||
+                order.getStatus() == Order.Status.SHIPPED||
+                    order.getStatus() == Order.Status.CANCELLED){
+            throw new RuntimeException("order cannot be cancelled");
+        }
+
+        for (OrderItem item : order.getItems()){
+            Product product = item.getProduct();
+            product.setStock(product.getStock() + item.getQuantity());
+            productRepo.save(product);
+        }
+
+        order.setStatus(Order.Status.CANCELLED);
+        orderRepo.save(order);
+    }
 }
