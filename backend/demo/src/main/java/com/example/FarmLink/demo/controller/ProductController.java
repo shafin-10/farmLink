@@ -1,5 +1,6 @@
 package com.example.FarmLink.demo.controller;
 
+import com.example.FarmLink.demo.dto.ProductDto;
 import com.example.FarmLink.demo.model.Product;
 import com.example.FarmLink.demo.dto.ResponseDto;
 import com.example.FarmLink.demo.repository.ProductRepo;
@@ -101,5 +102,11 @@ public class ProductController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(responseDto);
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<ProductDto> getProductById(@PathVariable int id){
+        ProductDto product = productService.getByID(id);
+        return ResponseEntity.status(HttpStatus.OK).body(product);
     }
 }

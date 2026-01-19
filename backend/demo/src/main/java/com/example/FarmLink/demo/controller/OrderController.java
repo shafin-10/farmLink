@@ -2,17 +2,17 @@ package com.example.FarmLink.demo.controller;
 
 import com.example.FarmLink.demo.dto.OrderDto;
 import com.example.FarmLink.demo.dto.PlaceOrderRequestDto;
+import com.example.FarmLink.demo.dto.ResponseDto;
 import com.example.FarmLink.demo.model.Order;
 import com.example.FarmLink.demo.service.OrderService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -38,4 +38,22 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK).body(myOrders);
     }
 
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderDto> getOrderDetails(@PathVariable int orderId, Authentication authentication){
+        String email = authentication.getName();
+        OrderDto orderDto = orderService.getOrderDetails(orderId, email);
+        return ResponseEntity.status(HttpStatus.OK).body(orderDto);
+    }
+
+    @GetMapping("/cancel")
+    public ResponseEntity<ResponseDto> cancelOrder(@RequestParam(value = "orderId") int id,
+                                                   @RequestBody(required = false) String msg, Authentication authentication){
+        String email = authentication.getName();
+        ResponseDto responseDto = new ResponseDto();
+
+        orderService.cancelOrder(email, id);
+        responseDto.setStatusCode("200");
+        responseDto.setStatusMsg("Order cancelled successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
 }
